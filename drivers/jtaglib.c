@@ -33,6 +33,7 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include "jtaglib.h"
 #include "output.h"
 #include "eem_defs.h"
@@ -412,21 +413,21 @@ unsigned int jtag_init(struct jtdev *p)
 {
 	unsigned int jtag_id;
 
-	jtag_rst_clr(p);
+	jtag_rst_set(p);
+	jtag_tst_clr(p);
+	usleep(1000);
 	p->f->jtdev_power_on(p);
+
 	jtag_tdi_set(p);
 	jtag_tms_set(p);
 	jtag_tck_set(p);
 	jtag_tclk_set(p);
 
-	jtag_rst_set(p);
-	jtag_tst_clr(p);
-
 	jtag_tst_set(p);
 	jtag_rst_clr(p);
 	jtag_tst_clr(p);
-
 	jtag_tst_set(p);
+	jtag_rst_set(p);
 
 	p->f->jtdev_connect(p);
 	jtag_rst_set(p);

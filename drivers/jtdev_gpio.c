@@ -143,7 +143,7 @@ static void jtgpio_power_off(struct jtdev *p)
 
 static void jtgpio_connect(struct jtdev *p)
 {
-  printf("JTAG_connct \n");
+  printf("JTAG_connect \n");
 }
 
 static void jtgpio_release(struct jtdev *p)
