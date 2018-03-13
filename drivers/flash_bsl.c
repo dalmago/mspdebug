@@ -181,7 +181,22 @@ static int flash_bsl_recv(struct flash_bsl_device *dev,
 	uint16_t recv_len;
 	uint16_t crc_value;
 
-	if (sport_read_all(dev->serial_fd, header, 3) < 0) {
+	uint8_t header_offset = 2;
+
+	if (sport_read_all(dev->serial_fd, header, 2) < 0){
+		printc_err("flash_bsl: read response failed: %s\n",
+			   last_error());
+		return -1;
+	}
+
+        // Sometimes the UART receives 0x00 on the start of the MSP answer
+        // - probably when it open its serial port. Ignore it
+	if (!header[0] && header[1] == 0x80){
+	    header[0] = header[1];
+	    header_offset = 1;
+	}
+
+	if (sport_read_all(dev->serial_fd, header + header_offset, 1 + 2 - header_offset) < 0) {
 		printc_err("flash_bsl: read response failed: %s\n",
 			   last_error());
 		return -1;
